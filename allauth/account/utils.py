@@ -61,7 +61,7 @@ def user_display(user):
 #     return False
 
 
-def perform_login(request, user, redirect_url=None):
+def perform_login(request, user, verification_sent_template, redirect_url=None):
     # not is_active: social users are redirected to a template
     # local users are stopped due to form validation checking is_active
     assert user.is_active
@@ -70,7 +70,7 @@ def perform_login(request, user, redirect_url=None):
                                             verified=True).exists()):
         send_email_confirmation(user, request=request)
         return render(request, 
-                      "account/verification_sent.html",
+                      verification_sent_template,
                       { "email": user.email })
     # HACK: This may not be nice. The proper Django way is to use an
     # authentication backend, but I fail to see any added benefit
@@ -88,8 +88,8 @@ def perform_login(request, user, redirect_url=None):
     return HttpResponseRedirect(redirect_url)
 
 
-def complete_signup(request, user, success_url):
-    return perform_login(request, user, redirect_url=success_url)
+def complete_signup(request, user, verification_sent_template, success_url):
+    return perform_login(request, user, verification_sent_template, redirect_url=success_url)
 
 
 def send_email_confirmation(user, request=None):

@@ -129,8 +129,8 @@ class LoginForm(forms.Form):
             raise forms.ValidationError(error)
         return self.cleaned_data
     
-    def login(self, request, redirect_url=None):
-        ret = perform_login(request, self.user, redirect_url=redirect_url)
+    def login(self, request, verification_sent_template, redirect_url=None):
+        ret = perform_login(request, self.user, verification_sent_template, redirect_url=redirect_url)
         if self.cleaned_data["remember"]:
             request.session.set_expiry(60 * 60 * 24 * 7 * 3)
         else:

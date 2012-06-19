@@ -28,6 +28,7 @@ def login(request, **kwargs):
     url_required = kwargs.pop("url_required", False)
     extra_context = kwargs.pop("extra_context", {})
     redirect_field_name = kwargs.pop("redirect_field_name", "next")
+    verification_sent_template = kwargs.pop("verification_sent_template", "account/verification_sent.html")
     
     if extra_context is None:
         extra_context = {}
@@ -37,7 +38,7 @@ def login(request, **kwargs):
     if request.method == "POST" and not url_required:
         form = form_class(request.POST)
         if form.is_valid():
-            return form.login(request, redirect_url=success_url)
+            return form.login(request, verification_sent_template, redirect_url=success_url)
     else:
         form = form_class()
     
@@ -60,6 +61,7 @@ def signup(request, **kwargs):
     template_name = kwargs.pop("template_name", "account/signup.html")
     redirect_field_name = kwargs.pop("redirect_field_name", "next")
     success_url = kwargs.pop("success_url", None)
+    verification_sent_template = kwargs.pop("verification_sent_template", "account/verification_sent.html")
     
     if success_url is None:
         success_url = get_default_redirect(request, redirect_field_name)
@@ -68,7 +70,7 @@ def signup(request, **kwargs):
         form = form_class(request.POST)
         if form.is_valid():
             user = form.save(request=request)
-            return complete_signup(request, user, success_url)
+            return complete_signup(request, user, verification_sent_template, success_url)
     else:
         form = form_class()
     ctx = {"form": form,
